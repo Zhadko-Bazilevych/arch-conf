@@ -1,4 +1,4 @@
-config_version = 13
+config_version = 14
 
 [bar.default]
 background_opacity = 0.79999998211860657
@@ -115,11 +115,11 @@ widget_order = [ "lockscreen-login-box@FALLBACK", "lockscreen-login-box@HDMI-A-1
     [lockscreen_widgets.widget."lockscreen-login-box@eDP-1"]
     box_height = 196.0
     box_width = 810.0
-    cx = 800.0
-    cy = 718.0
+    cx = 960.00006103515625
+    cy = 957.3333740234375
     output = "eDP-1"
-    placement_height = 900.0
-    placement_width = 1600.0
+    placement_height = 1200.0
+    placement_width = 1920.0
     rotation = 0.0
     type = "login_box"
 
