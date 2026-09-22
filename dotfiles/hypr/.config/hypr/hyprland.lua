@@ -2,71 +2,12 @@
 
 local mod = "SUPER"
 
----@class Config
----@field internal boolean
----@field external boolean
-
----@param config? Config
-local function setup_monitors(config)
-    if not config then config = { internal = true, external = true } end
-    if config.internal == nil then config.internal = true end
-    if config.external == nil then config.external = true end
-
-    ---@type HL.MonitorSpec
-    local internal_monitor = {
-        disabled = not config.internal,
-        output   = "eDP-1",
-        mode     = "2560x1440@165",
-        position = "0x1080",
-        scale    = 1.6,
-    }
-    ---@type HL.MonitorSpec
-    local external_monitor = {
-        disabled = not config.external,
-        output   = "HDMI-A-1",
-        mode     = "1920x1080@60",
-        position = "0x0",
-        scale    = 1,
-    }
-
-
-    hl.monitor(internal_monitor)
-    hl.monitor(external_monitor)
-
-    local only_output = nil
-    if not config.internal then
-        only_output = external_monitor.output
-    end
-    if not config.external then
-        only_output = internal_monitor.output
-    end
-    if not only_output then return end
-
-    for _, ws in ipairs(hl.get_workspaces()) do
-        hl.dispatch(hl.dsp.workspace.move({ workspace = ws, monitor = only_output }))
-    end
-end
-
-local function enable_monitors()
-    if os.getenv("IS_HYPRLAND_CONFIG_EDIT") == nil then
-        hl.env("IS_HYPRLAND_CONFIG_EDIT", "true")
-        setup_monitors()
-        return
-    end
-
-    local internal = false
-    local external = false
-    for _, monitor in ipairs(hl.get_monitors()) do
-        if monitor.name == "eDP-1" then
-            internal = true
-        elseif monitor.name == "HDMI-A-1" then
-            external = true
-        end
-    end
-    setup_monitors({ internal = internal, external = external })
-end
-
-enable_monitors()
+hl.monitor({
+    output   = "eDP-1",
+    mode     = "1920x1200@144",
+    position = "0x0",
+    scale    = 1,
+})
 
 hl.config({
     xwayland = {
@@ -245,10 +186,6 @@ hl.bind(mod .. " + SPACE", function()
     hl.dispatch(hl.dsp.window.cycle_next({ tyled = floating, floating = not floating }))
 end)
 
-hl.bind(mod .. " + SHIFT + M", function() setup_monitors({ external = true, internal = false }) end)
-hl.bind(mod .. " + SHIFT + N", function() setup_monitors({ external = false, internal = true }) end)
-hl.bind(mod .. " + SHIFT + B", function() setup_monitors() end)
-
 hl.bind(mod .. " + SHIFT + ALT + L", hl.dsp.exec_cmd("swaylock --color=000000 --show-failed-attempts"))
 
 hl.bind("ALT + W", hl.dsp.group.toggle())
@@ -269,20 +206,17 @@ hl.bind(mod .. " + SHIFT + A", hl.dsp.exec_cmd("hyprshot -m region --raw | satty
 hl.bind(mod .. " + V", hl.dsp.exec_cmd("copyq show"))
 hl.bind(mod .. " + Return", hl.dsp.exec_cmd("ghostty"))
 hl.bind(mod .. " + Q", hl.dsp.window.close())
--- TODO: remove when i buy an external keyboard
-hl.bind(mod .. " + C", hl.dsp.window.close())
+
 hl.bind(mod .. " + ALT + E",
     hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch exit"))
 hl.bind(mod .. " + SHIFT + SPACE", hl.dsp.window.float())
 hl.bind(mod .. " + O", hl.dsp.exec_cmd("fuzzel"))
--- TODO: remove when i buy an external keyboard
-hl.bind(mod .. " + M", hl.dsp.exec_cmd("fuzzel"))
+
 hl.bind(mod .. " + E", hl.dsp.layout("togglesplit"))
 hl.bind(mod .. " + F", hl.dsp.window.fullscreen())
 hl.bind(mod .. " + SHIFT + F", hl.dsp.window.fullscreen())
 hl.bind(mod .. " + R", hl.dsp.submap("resize"))
--- TODO: remove when i buy an external keyboard
-hl.bind(mod .. " + T", hl.dsp.submap("resize"))
+
 hl.define_submap("resize", function()
     hl.bind("L", hl.dsp.window.resize({ x = 10, y = 0, relative = true }), { repeating = true })
     hl.bind("H", hl.dsp.window.resize({ x = -10, y = 0, relative = true }), { repeating = true })
@@ -290,8 +224,7 @@ hl.define_submap("resize", function()
     hl.bind("J", hl.dsp.window.resize({ x = 0, y = -10, relative = true }), { repeating = true })
     hl.bind("escape", hl.dsp.submap("reset"))
     hl.bind(mod .. " + R", hl.dsp.submap("reset"))
-    -- TODO: remove when i buy an external keyboard
-    hl.bind(mod .. " + T", hl.dsp.submap("reset"))
+
 end)
 
 hl.bind("ALT + SHIFT + 1", hl.dsp.exec_cmd("hyprctl switchxkblayout main 0"))
